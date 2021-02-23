@@ -1,0 +1,38 @@
+table {
+  display: flex;
+  flex-direction: column;
+}
+
+tr {
+  border: solid 1px $off-yellow;
+  margin: 0 auto;
+
+  > * {
+    font-weight: 400;
+  }
+}
+
+th,
+td {
+  border: solid 1px $off-yellow;
+}
+
+td {
+  text-align: center;
+}
+
+.date {
+  width: 17%;
+}
+
+.name {
+  width: 17%;
+}
+
+.note {
+  width: 65%;
+}
+
+.table-heading > * {
+  font-weight: 600;
+}

@@ -1,0 +1,32 @@
+@import 'config';
+
+.grid {
+  margin: 0 auto;
+  max-width: $max-width;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -$gutter/2;
+  margin-right: -$gutter/2;
+}
+
+.col {
+  padding-left: $gutter/2;
+  padding-right: $gutter/2;
+  width: 100%;
+}
+
+@for $i from 1 through $columns {
+  .col-#{$i} {
+    width: $i / $columns * 100%;
+  }
+
+  @media (max-width: 900px) {
+    .col-#{$i}-sm {
+      width: $i / $columns * 100%;
+    }
+  }
+}
