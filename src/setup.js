@@ -69,10 +69,12 @@ async function setup() {
     try {
       result = await query(q, [name, nationalID, ath, anon, date]);
     } catch (e) {
+      console.info('It failed');
       return 0;
     }
     console.info(`:>> Entry inserted ${i}`);
   }
+  console.info(':>> Insertion complete');
   return result;
 }
 
