@@ -1,11 +1,18 @@
 table {
   display: flex;
-  flex-direction: column;
+  width: 100%;
+}
+
+tbody {
+  margin: 0 auto;
+  width: 90%;
 }
 
 tr {
   border: solid 1px $off-yellow;
+  display: flex;
   margin: 0 auto;
+  width: 100%;
 
   > * {
     font-weight: 400;
@@ -35,4 +42,13 @@ td {
 
 .table-heading > * {
   font-weight: 600;
+}
+
+.selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 0 auto;
+  margin-top: 1rem;
+  width: 30%;
 }

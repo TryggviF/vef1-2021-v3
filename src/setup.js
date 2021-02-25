@@ -1,6 +1,7 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
+import faker from 'faker';
 
 dotenv.config();
 
@@ -27,26 +28,52 @@ async function query(q, values = []) {
   try {
     result = await client.query(q, values);
   } finally {
-    await client.end();
+    await client.release();
   }
   return result;
 }
 
-async function setup() {
-  let result = '';
-  let result2 = '';
-  const dropped = await query('DROP TABLE IF EXISTS signatures');
-  try {
-    const createTable = await readFile('./sql/schema.sql');
-    const tData = createTable.toString('utf-8');
-    result = await query(tData);
-    const insertData = await readFile('./sql/fake.sql');
-    const iData = insertData.toString('utf-8');
-    result2 = await query(iData);
-  } catch (e) {
-    console.error(e.message);
+function makeID() {
+  let id = '';
+  for (let i = 0; i < 10; i += 1) {
+    id += Math.floor(Math.random() * 10);
   }
-  return [result, result2, dropped];
+  return id;
+}
+async function setup() {
+  const createTable = await readFile('./sql/schema.sql');
+  try {
+    const tData = createTable.toString('utf-8');
+    await query(tData);
+  } catch (e) {
+    return 0;
+  }
+  const uname = 'admin';
+  const password = '$2a$11$pgj3.zySyFOvIQEpD7W6Aund1Tw.BFarXxgLJxLbrzIv/4Nteisii';
+  const u = 'INSERT INTO admins (name, password) VALUES ($1, $2);';
+  const inputs = Math.floor(Math.random() * 100 + 500);
+  let result = '';
+  try {
+    await query(u, [uname, password]);
+  } catch (e) {
+    console.info('It failed', e);
+    return 0;
+  }
+  const q = 'INSERT INTO SIGNATURES (name, NationalId, comment, anonymous, signed) VALUES ($1, $2, $3, $4, $5);';
+  for (let i = 0; i < inputs; i += 1) {
+    const name = faker.name.findName();
+    const nationalID = makeID();
+    const ath = (Math.random() < 0.5) ? faker.lorem.sentence() : '';
+    const anon = (Math.random() < 0.5);
+    const date = faker.date.between('2021-02-28', '2021-02-14');
+    try {
+      result = await query(q, [name, nationalID, ath, anon, date]);
+    } catch (e) {
+      return 0;
+    }
+    console.info(`:>> Entry inserted ${i}`);
+  }
+  return result;
 }
 
 setup();

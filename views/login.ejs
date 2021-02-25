@@ -1,0 +1,13 @@
+<%- include('header') %>
+<% if(message){ %> 
+    <h1><%= message %> </h1>
+<% } %> 
+<form action="/login" method="POST" enctype="application/x-www-form-urlencoded">
+    <label for="username">Notendanafn</label>
+    <input type="text" name="username" id="username">
+    <label for="password">Lykilorð</label>
+    <input type="password" name="password" id="password">
+    <input type="submit" value="Skrá inn">
+</form>
+
+<%- include('footer') %>  

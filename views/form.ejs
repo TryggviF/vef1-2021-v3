@@ -1,59 +1,102 @@
 <%- include('header') %>
     <header>
-        <h1>Undirskriftarlisti</h1>
+        <% if (locals.user) { %>
+            <h1>Admin</h1>
+        <% } else { %>  
+            <h1>Undirskriftarlisti</h1>
+        <% } %> 
     </header>
     <main>
-        <form action="/post" method = "post" enctype="application/x-www-form-urlencoded">
-            <div class = "container"><label for="nafn">Nafn*</label>
-                <input class = "<%= locals.wrongfields[0] %> " type="text" name="nafn" id="nafn" value="<%= locals.form[0] %>">
-            </div>
-                <div class = "container">
-                    <label for="kennitala">Kennitala*</label>
-                <input class = "<%= locals.wrongfields[1] %> " type="text" name = "kennitala" id="kennitala" value="<%= locals.form[1] %>">
+        <% if (!locals.user) { %>
+            <form action="/post" method="post" enctype="application/x-www-form-urlencoded">
+                <div class="container"><label for="nafn">Nafn*</label>
+                    <input class="<%= locals.wrongfields[0] %> " type="text" name="nafn" id="nafn"
+                        value="<%= locals.form[0] %>">
                 </div>
-                <div class = "container">
-            <label for="ath">Athugasemd:</label>
-                <textarea class = "ath <%= locals.wrongfields[2] %>" name = "ath" id = "ath" cols="30" rows="10"><%= locals.form[2] %></textarea>
-            </div>
-            <div class = "the-box">
-            <label>Ekki birta nafn á lista</label>
-                <input type="checkbox" name="anon" id="anon" <%= locals.form[3] %> >
-            </div>
-            <div class = "submit-container">
-                <input type="submit" value="Skrifa undir" class = "submission">
-            </div>
-        </form>
-        <div class="errors">
-        <% if(locals.errors){ %> 
-            <ul>
-                <% locals.errors.forEach(error => { %>
-                    <li><%= error %> </li>
-                <% }); %> 
-            </ul>
-        <% } %>
-        </div> 
-    <hr>
-    <div class = "sign__heading">
-        <h2>Undirskriftir</h2>
-    </div>
-    <table>
-        <tr class = "table-heading">
-            <th class = "date">Dags</th>
-            <th class = "name">Nafn</th>
-            <th class= "note">Athugasemd</th>
-        </tr>
-        <% signatures.rows.forEach(sign => { %>
-            <tr>
-                <td class = "date"><%= new Date(sign.signed).toDateString() %> </td>
-                <% if(sign.anonymous) { %>
-                    <td class = "name"></td>
-                <% } else {%>
-                    <td class = "name"><%= sign.name%></td>
-                <%} %>
-                <td class= "note"><%= sign.comment%></td>
-            </tr>    
-        <% }); %> 
-    
-    </table>
+                <div class="container">
+                    <label for="kennitala">Kennitala*</label>
+                    <input class="<%= locals.wrongfields[1] %> " type="text" name="kennitala" id="kennitala"
+                        value="<%= locals.form[1] %>">
+                </div>
+                <div class="container">
+                    <label for="ath">Athugasemd:</label>
+                    <textarea class="ath <%= locals.wrongfields[2] %>" name="ath" id="ath" cols="30"
+                        rows="10"><%= locals.form[2] %></textarea>
+                </div>
+                <div class="the-box">
+                    <label>Ekki birta nafn á lista</label>
+                    <input type="checkbox" name="anon" id="anon" <%=locals.form[3] %> >
+                </div>
+                <div class="submit-container">
+                    <input type="submit" value="Skrifa undir" class="submission">
+                </div>
+            </form>
+            <% } else {%>
+                <a href="/logout">Skrá út</a>
+                <% } %>
+                    <div class="errors">
+                        <% if(locals.errors){ %>
+                            <ul>
+                                <% locals.errors.forEach(error=> { %>
+                                    <li>
+                                        <%= error %>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                            <% } %>
+                    </div>
+                    <hr>
+                    <div class="sign__heading">
+                        <h2>Undirskriftir</h2>
+                        <h3>Fjöldi undirskrifta <%= locals.totalRows %> </h3>
+                    </div>
+                    <table>
+                        <tr class="table-heading">
+                            <th class="date">Dags</th>
+                            <th class="name">Nafn</th>
+                            <th class="note">Athugasemd</th>
+                        </tr>
+                        <% signatures.rows.forEach(sign=> { %>
+                            <tr>
+                                <td class="date">
+                                    <%= new Date(sign.signed).toDateString() %>
+                                </td>
+                                <% if(sign.anonymous) { %>
+                                    <td class="name">Nafnlaus</td>
+                                    <% } else {%>
+                                        <td class="name">
+                                            <%= sign.name%>
+                                        </td>
+                                        <%} %>
+                                            <td class="note">
+                                                <%= sign.comment%>
+                                            </td>
+                                            <% if(locals.user){ %>
+                                                <td class=delete>
+                                                    <form action="/delete" method="post"
+                                                        enctype="application/x-www-form-urlencoded">
+                                                        <input type="hidden" value="<%= sign.id %>" id = "id" name = "id">
+                                                        <input type="submit" value="Eyða">
+                                                    </form>
+                                                </td>
+                                                <% } %>
+                            </tr>
+                            <% }); %>
+                    </table>
+                    <div class="selection">
+                        
+                        <% if (!start){ %>
+                            <a href="/?offset=<%= offset - limit%>&limit=<%= limit %> ">Fyrri</a>
+                            <% } else { %>
+                                <a href=""></a>
+                                <% } %> 
+                            <p>Síða <%= offset/limit + 1 %> af <%= locals.pageCount %> </p>
+
+                                <% if (!end) { %>
+                                    <a href="/?offset=<%= offset + limit%>&limit=<%= limit %>">Seinni</a>
+                                    <% } else{ %>
+                                        <a href=""></a>
+                                        <% } %> 
+                    </div>
     </main>
-    <%- include('footer') %> 
+    <%- include('footer') %>

@@ -16,6 +16,7 @@ module.exports = {
     // Skilgreinum að þetta sé rótin í verkefninu okkar, þar sem það er annað
     // package.json skjal í ./src
     'import/no-extraneous-dependencies': ['error', { packageDir: './' }],
+    'no-await-in-loop': 0,
 
     // Leyfum console.info, warn og error
     'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
