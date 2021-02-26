@@ -28,7 +28,7 @@ async function query(q, values = []) {
   try {
     result = await client.query(q, values);
   } finally {
-    await client.release();
+    client.release();
   }
   return result;
 }
@@ -52,7 +52,6 @@ async function setup() {
   const password = '$2a$11$pgj3.zySyFOvIQEpD7W6Aund1Tw.BFarXxgLJxLbrzIv/4Nteisii';
   const u = 'INSERT INTO admins (name, password) VALUES ($1, $2);';
   const inputs = Math.floor(Math.random() * 100 + 500);
-  let result = '';
   try {
     await query(u, [uname, password]);
   } catch (e) {
@@ -67,7 +66,7 @@ async function setup() {
     const anon = (Math.random() < 0.5);
     const date = faker.date.between('2021-02-28', '2021-02-14');
     try {
-      result = await query(q, [name, nationalID, ath, anon, date]);
+      await query(q, [name, nationalID, ath, anon, date]);
     } catch (e) {
       console.info('It failed');
       return 0;
@@ -75,7 +74,8 @@ async function setup() {
     console.info(`:>> Entry inserted ${i}`);
   }
   console.info(':>> Insertion complete');
-  return result;
+  return 0;
 }
-
-setup();
+console.info('We\'re about to set up!');
+await setup();
+console.info('We set up!');
