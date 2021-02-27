@@ -32,6 +32,7 @@
                 </div>
             </form>
             <% } else {%>
+                <p>Skráður inn sem: <strong> <%= locals.user.name %></strong> </p>
                 <a href="/logout">Skrá út</a>
                 <% } %>
                     <div class="errors">
